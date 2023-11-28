@@ -1,5 +1,6 @@
 # Internal client that makes calls out to the [SlackWebClient](https://github.com/slack-ruby/slack-ruby-client)
-module Slack
+
+module SlackPairs::Slack
   class Client
     attr_reader :client
 

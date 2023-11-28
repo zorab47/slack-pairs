@@ -5,8 +5,8 @@ RSpec.describe CreateGroupsJob do
     ENV["PAIRING_CHANNEL"] = "ABCD"
     ENV["GROUPS_CHANNEL"] = ""
     allow(Date).to receive(:today).and_return(Date.new(2021, 6, 7))
-    allow(Slack::Client).to receive(:get_channel_users).and_return((1..21).to_a)
-    expect(Slack::Client).to receive(:create_conversation).exactly(10)
+    allow(SlackPairs::Slack::Client).to receive(:get_channel_users).and_return((1..21).to_a)
+    expect(SlackPairs::Slack::Client).to receive(:create_conversation).exactly(10)
     CreateGroupsJob.perform
   end
 
@@ -14,8 +14,8 @@ RSpec.describe CreateGroupsJob do
     ENV["PAIRING_CHANNEL"] = "ABCD"
     ENV["GROUPS_CHANNEL"] = ""
     allow(Date).to receive(:today).and_return(Date.new(2021, 6, 21))
-    expect(Slack::Client).to receive(:get_channel_users).exactly(0)
-    expect(Slack::Client).to receive(:create_conversation).exactly(0)
+    expect(SlackPairs::Slack::Client).to receive(:get_channel_users).exactly(0)
+    expect(SlackPairs::Slack::Client).to receive(:create_conversation).exactly(0)
     CreateGroupsJob.perform
   end
 
@@ -23,8 +23,8 @@ RSpec.describe CreateGroupsJob do
     ENV["PAIRING_CHANNEL"] = ""
     ENV["GROUPS_CHANNEL"] = "ABCD"
     allow(Date).to receive(:today).and_return(Date.new(2021, 6, 7))
-    allow(Slack::Client).to receive(:get_channel_users).and_return((1..21).to_a)
-    expect(Slack::Client).to receive(:create_conversation).exactly(6)
+    allow(SlackPairs::Slack::Client).to receive(:get_channel_users).and_return((1..21).to_a)
+    expect(SlackPairs::Slack::Client).to receive(:create_conversation).exactly(6)
     CreateGroupsJob.perform
   end
 

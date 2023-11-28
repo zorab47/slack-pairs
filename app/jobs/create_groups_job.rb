@@ -1,3 +1,5 @@
+require "slack_pairs/slack/client"
+
 # Generates groups for both a groups and pairing channel
 class CreateGroupsJob < ApplicationJob
   MIN_GROUP_SIZE = 2 # allows for a group of 3
@@ -23,7 +25,7 @@ class CreateGroupsJob < ApplicationJob
     # Gets the users from the pairing channel (stored as an environment variable), groups,
     # balances groups (so there isn't a group of 1), and starts the conversations
     def create_pairs
-      members = Slack::Client.get_channel_users(channel_id: ENV["PAIRING_CHANNEL"])
+      members = SlackPairs::Slack::Client.get_channel_users(channel_id: ENV["PAIRING_CHANNEL"])
       pairs = group_members(members: members, group_size: MIN_GROUP_SIZE)
       pairs = balance_pairs(pairs)
       start_conversations(groups: pairs, type: :pairing)
@@ -33,7 +35,7 @@ class CreateGroupsJob < ApplicationJob
     # Gets the users from the groups channel (stored as an environment variable), groups,
     # balances groups (so there isn't a group of less than 3), and starts the conversations
     def create_groups
-      members = Slack::Client.get_channel_users(channel_id: ENV["GROUPS_CHANNEL"])
+      members = SlackPairs::Slack::Client.get_channel_users(channel_id: ENV["GROUPS_CHANNEL"])
       groups = group_members(members: members, group_size: MAX_GROUP_SIZE)
       groups = balance_groups(groups)
       start_conversations(groups: groups, type: :groups)
@@ -85,7 +87,7 @@ class CreateGroupsJob < ApplicationJob
     # @param type [Symbol] group type so we send the right message. Currently either :pairing or :groups
     def start_conversations(groups:, type:)
       groups.each do |group|
-        Slack::Client.create_conversation(group: group, type: type)
+        SlackPairs::Slack::Client.create_conversation(group: group, type: type)
       end
     end
   end
