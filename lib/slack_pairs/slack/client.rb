@@ -1,5 +1,8 @@
 # Internal client that makes calls out to the [SlackWebClient](https://github.com/slack-ruby/slack-ruby-client)
-module Slack
+#
+require "slack_pairs/slack_message"
+
+module SlackPairs::Slack
   class Client
     attr_reader :client
 
@@ -19,11 +22,11 @@ module Slack
             user_id: user_id,
             channel_name: current_channel_name,
             client: client,
-            blocks: SlackMessage.help_message
+            blocks: SlackPairs::SlackMessage.help_message
           )
-        elsif SlackMessage::CHANNELS.include? channel_name
+        elsif SlackPairs::SlackMessage::CHANNELS.include? channel_name
           client.conversations_invite(
-            channel: SlackMessage::CHANNELS[channel_name][:channel_id],
+            channel: SlackPairs::SlackMessage::CHANNELS[channel_name][:channel_id],
             users: user_id
           )
         else
@@ -131,7 +134,7 @@ If it looks like a bug, please copy and send this message to Jennifer Konikowski
       begin
         client.chat_postMessage(
           channel: ENV["MOD_CHANNEL"],
-          blocks: SlackMessage.mod_message(
+          blocks: SlackPairs::SlackMessage.mod_message(
             user_id: user_id,
             channel_id: channel_id,
             channel_name: channel_name,
@@ -160,9 +163,9 @@ If it looks like a bug, please copy and send this message to Jennifer Konikowski
     def self.generate_message(group:, type:, message: nil)
       case type
       when :pairing
-        SlackMessage.pair_message(pair: group)
+        SlackPairs::SlackMessage.pair_message(pair: group)
       when :groups
-        SlackMessage.group_message(group: group)
+        SlackPairs::SlackMessage.group_message(group: group)
       else
         message
       end

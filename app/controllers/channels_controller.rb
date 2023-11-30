@@ -1,3 +1,5 @@
+require "slack_pairs/slack/client"
+
 # Accepts webhooks from slack so users can add themselves to private channels
 class ChannelsController < ApplicationController
   skip_before_action :verify_authenticity_token
@@ -7,7 +9,7 @@ class ChannelsController < ApplicationController
   #
   # @return [Status Code] should return a 202
   def create
-    Slack::Client.add_user_to_channel(
+    SlackPairs::Slack::Client.add_user_to_channel(
       user_id: params[:user_id],
       channel_id: params[:channel_id],
       channel_name: params[:text],

@@ -1,5 +1,6 @@
 # Slack message templates built initially using the [Slack Block Kit Builder](https://api.slack.com/block-kit)
-module SlackMessage
+
+module SlackPairs::SlackMessage
   module_function
 
   # constant for channel ids and descriptions for identity channels

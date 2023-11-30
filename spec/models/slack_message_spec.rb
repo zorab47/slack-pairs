@@ -1,9 +1,10 @@
 require "rails_helper"
+require "slack_pairs/slack_message"
 
-RSpec.describe SlackMessage do
+RSpec.describe SlackPairs::SlackMessage do
   it "generates pair message" do
     ENV["PAIRING_CHANNEL"] = "C123"
-    message = SlackMessage.pair_message(pair: ["123", "456"])
+    message = described_class.pair_message(pair: ["123", "456"])
     expected_message = [
       {
         type: "section",
@@ -20,7 +21,7 @@ RSpec.describe SlackMessage do
 
   it "generates group message" do
     ENV["GROUPS_CHANNEL"] = "C123"
-    message = SlackMessage.group_message(group: ["123", "456", "789"])
+    message = described_class.group_message(group: ["123", "456", "789"])
     expected_message = [
       {
         type: "section",
@@ -36,7 +37,7 @@ RSpec.describe SlackMessage do
   end
 
   it "generates mod message" do
-    message = SlackMessage.mod_message(user_id: "U123", channel_id: "C123", channel_name: "fun_times", text: "something not great happened.")
+    message = described_class.mod_message(user_id: "U123", channel_id: "C123", channel_name: "fun_times", text: "something not great happened.")
     expected_message = [
       {
         type: "section",
