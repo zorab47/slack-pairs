@@ -9,7 +9,7 @@ RSpec.describe SlackPairs::Slack::Client do
       channel = OpenStruct.new
       channel.id = 2
       conversation.channel = channel
-      expected_message = SlackMessage.pair_message(pair: ["123", "456"])
+      expected_message = SlackPairs::SlackMessage.pair_message(pair: ["123", "456"])
       allow(client).to receive(:conversations_open).with(users: "123,456").and_return(conversation)
       allow(client).to receive(:chat_postMessage).with(channel: 2, blocks: expected_message)
       SlackPairs::Slack::Client.create_conversation(group: ["123", "456"], type: :pairing, client: client)
@@ -20,7 +20,7 @@ RSpec.describe SlackPairs::Slack::Client do
       channel = OpenStruct.new
       channel.id = 2
       conversation.channel = channel
-      expected_message = SlackMessage.group_message(group: ["123", "456", "789"])
+      expected_message = SlackPairs::SlackMessage.group_message(group: ["123", "456", "789"])
       allow(client).to receive(:conversations_open).with(users: "123,456,789").and_return(conversation)
       allow(client).to receive(:chat_postMessage).with(channel: 2, blocks: expected_message)
       SlackPairs::Slack::Client.create_conversation(group: ["123", "456", "789"], type: :groups, client: client)
@@ -32,7 +32,7 @@ RSpec.describe SlackPairs::Slack::Client do
 
     it "works with no error" do
       ENV["MOD_CHANNEL"] = "678"
-      message = SlackMessage.mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry")
+      message = SlackPairs::SlackMessage.mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry")
       expect(client).to receive(:chat_postMessage).with(channel: "678", blocks: message)
       SlackPairs::Slack::Client.send_mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry", client: client)
     end
@@ -40,7 +40,7 @@ RSpec.describe SlackPairs::Slack::Client do
     it "will error" do
       ENV["MOD_CHANNEL"] = "678"
       error = StandardError.new("test")
-      message = SlackMessage.mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry")
+      message = SlackPairs::SlackMessage.mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry")
       allow(client).to receive(:chat_postMessage).with(channel: "678", blocks: message).and_raise(error)
       expect(client).to receive(:chat_postEphemeral).with(channel: "345", text: "There was an error! Please copy and send this message to Jennifer:\ntest", user: "123")
       expect { SlackPairs::Slack::Client.send_mod_message(user_id: "123", channel_id: "345", channel_name: "test", text: "something is awry", client: client) }.to raise_error(error)
@@ -51,7 +51,7 @@ RSpec.describe SlackPairs::Slack::Client do
     let(:client) { double(Slack::Web::Client) }
 
     it "sends help message" do
-      expect(client).to receive(:chat_postEphemeral).with({channel: "6890", user: "1235", blocks: SlackMessage.help_message})
+      expect(client).to receive(:chat_postEphemeral).with({channel: "6890", user: "1235", blocks: SlackPairs::SlackMessage.help_message})
       SlackPairs::Slack::Client.add_user_to_channel(
         user_id: "1235",
         channel_id: "6890",
@@ -67,7 +67,7 @@ RSpec.describe SlackPairs::Slack::Client do
       channel.id = 2
       conversation.channel = channel
       allow(client).to receive(:conversations_open).with(users: "1235").and_return(conversation)
-      expect(client).to receive(:chat_postMessage).with({channel: 2, blocks: SlackMessage.help_message})
+      expect(client).to receive(:chat_postMessage).with({channel: 2, blocks: SlackPairs::SlackMessage.help_message})
       SlackPairs::Slack::Client.add_user_to_channel(
         user_id: "1235",
         channel_id: "2",
